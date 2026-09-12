@@ -1,0 +1,2 @@
+import { api } from "@/lib/api-client";
+export const permissionService = { addRole: (data: unknown) => api.post("/permission/add-role", data), byCode: (code: string) => api.get(`/permission/code/${code}`), byUser: () => api.get("/permission/role"), remove: (data: unknown) => api.put("/permission/remove", data), byModule: (module: string) => api.get(`/permission/module/${module}`), roles: () => api.get("/users/role/list") };

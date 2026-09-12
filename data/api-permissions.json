@@ -1,0 +1,280 @@
+[
+  {
+    "module": "ANALYTICS",
+    "fileName": "analytics.ts",
+    "features": [
+      {
+        "featureKey": "ANALYTICS_ANALYTICS",
+        "featureName": "ANALYTICS",
+        "apis": [
+          {
+            "method": "GET",
+            "clientPath": "/analytics",
+            "code": "ANALYTICS_GET__ANALYTICS"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "AUTH",
+    "fileName": "auth.ts",
+    "features": [
+      {
+        "featureKey": "AUTH_LOGIN",
+        "featureName": "AUTH",
+        "apis": [
+          {
+            "method": "POST",
+            "clientPath": "/login",
+            "code": "AUTH_POST__LOGIN"
+          }
+        ]
+      },
+      {
+        "featureKey": "AUTH_LOGOUT",
+        "featureName": "AUTH",
+        "apis": [
+          {
+            "method": "POST",
+            "clientPath": "/logout",
+            "code": "AUTH_POST__LOGOUT"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "BOOK",
+    "fileName": "book.ts",
+    "features": [
+      {
+        "featureKey": "BOOK_BOOK",
+        "featureName": "BOOK",
+        "apis": [
+          {
+            "method": "GET",
+            "clientPath": "/book",
+            "code": "BOOK_GET__BOOK"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/book/:id",
+            "code": "BOOK_GET__BOOK_ID"
+          },
+          {
+            "method": "POST",
+            "clientPath": "/book/create",
+            "code": "BOOK_POST__BOOK_CREATE"
+          },
+          {
+            "method": "PUT",
+            "clientPath": "/book/:id",
+            "code": "BOOK_PUT__BOOK_ID"
+          },
+          {
+            "method": "DELETE",
+            "clientPath": "/book/:id",
+            "code": "BOOK_DELETE__BOOK_ID"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "CATEGORY",
+    "fileName": "category.ts",
+    "features": [
+      {
+        "featureKey": "CATEGORY_CATEGORY",
+        "featureName": "CATEGORY",
+        "apis": [
+          {
+            "method": "GET",
+            "clientPath": "/category",
+            "code": "CATEGORY_GET__CATEGORY"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/category/books/:id",
+            "code": "CATEGORY_GET__CATEGORY_BOOKS_ID"
+          },
+          {
+            "method": "POST",
+            "clientPath": "/category/create",
+            "code": "CATEGORY_POST__CATEGORY_CREATE"
+          },
+          {
+            "method": "PUT",
+            "clientPath": "/category/:id",
+            "code": "CATEGORY_PUT__CATEGORY_ID"
+          },
+          {
+            "method": "DELETE",
+            "clientPath": "/category/:id",
+            "code": "CATEGORY_DELETE__CATEGORY_ID"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "CHAPTERS",
+    "fileName": "chapters.ts",
+    "features": [
+      {
+        "featureKey": "CHAPTERS_CHAPTERS",
+        "featureName": "CHAPTERS",
+        "apis": [
+          {
+            "method": "GET",
+            "clientPath": "/chapters",
+            "code": "CHAPTERS_GET__CHAPTERS"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/chapters/:id",
+            "code": "CHAPTERS_GET__CHAPTERS_ID"
+          },
+          {
+            "method": "POST",
+            "clientPath": "/chapters",
+            "code": "CHAPTERS_POST__CHAPTERS"
+          },
+          {
+            "method": "PUT",
+            "clientPath": "/chapters/updated/:id",
+            "code": "CHAPTERS_PUT__CHAPTERS_UPDATED_ID"
+          },
+          {
+            "method": "DELETE",
+            "clientPath": "/chapters/delete/:id",
+            "code": "CHAPTERS_DELETE__CHAPTERS_DELETE_ID"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "PERMISSIONS",
+    "fileName": "permissions.ts",
+    "features": [
+      {
+        "featureKey": "PERMISSIONS_PERMISSION",
+        "featureName": "PERMISSIONS",
+        "apis": [
+          {
+            "method": "GET",
+            "clientPath": "/permission/code/:id",
+            "code": "PERMISSIONS_GET__PERMISSION_CODE_ID"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/permission/role",
+            "code": "PERMISSIONS_GET__PERMISSION_ROLE"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/permission/module/:id",
+            "code": "PERMISSIONS_GET__PERMISSION_MODULE_ID"
+          },
+          {
+            "method": "POST",
+            "clientPath": "/permission/add-role",
+            "code": "PERMISSIONS_POST__PERMISSION_ADD_ROLE"
+          },
+          {
+            "method": "PUT",
+            "clientPath": "/permission/remove",
+            "code": "PERMISSIONS_PUT__PERMISSION_REMOVE"
+          }
+        ]
+      },
+      {
+        "featureKey": "PERMISSIONS_USERS",
+        "featureName": "PERMISSIONS",
+        "apis": [
+          {
+            "method": "GET",
+            "clientPath": "/users/role/list",
+            "code": "PERMISSIONS_GET__USERS_ROLE_LIST"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "TRACKS",
+    "fileName": "tracks.ts",
+    "features": [
+      {
+        "featureKey": "TRACKS_TRACK",
+        "featureName": "TRACKS",
+        "apis": [
+          {
+            "method": "POST",
+            "clientPath": "/track/upload",
+            "code": "TRACKS_POST__TRACK_UPLOAD"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "module": "USER",
+    "fileName": "user.ts",
+    "features": [
+      {
+        "featureKey": "USER_USERS",
+        "featureName": "USER",
+        "apis": [
+          {
+            "method": "GET",
+            "clientPath": "/users",
+            "code": "USER_GET__USERS"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/users/admin",
+            "code": "USER_GET__USERS_ADMIN"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/users/role/list",
+            "code": "USER_GET__USERS_ROLE_LIST"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/users/:id",
+            "code": "USER_GET__USERS_ID"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/users/detail-info",
+            "code": "USER_GET__USERS_DETAIL_INFO"
+          },
+          {
+            "method": "POST",
+            "clientPath": "/users/create",
+            "code": "USER_POST__USERS_CREATE"
+          },
+          {
+            "method": "PUT",
+            "clientPath": "/users/:id",
+            "code": "USER_PUT__USERS_ID"
+          },
+          {
+            "method": "PUT",
+            "clientPath": "/users/:id/permissions",
+            "code": "USER_PUT__USERS_ID_PERMISSIONS"
+          },
+          {
+            "method": "DELETE",
+            "clientPath": "/users/:id",
+            "code": "USER_DELETE__USERS_ID"
+          }
+        ]
+      }
+    ]
+  }
+]
