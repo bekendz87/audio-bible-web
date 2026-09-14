@@ -42,8 +42,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("tokenExpiry");
-    if (refreshToken)
+    if (refreshToken) {
       await authService.logout(refreshToken).catch(() => undefined);
+    }
     router.push("/login");
   }
 
@@ -58,15 +59,15 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             className="flex items-center gap-3"
             onClick={() => setOpen(false)}
           >
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none">
-              <BookOpen className="h-5 w-5" />
+            <span className="grid  place-items-center rounded-2xl dark:shadow-none">
+              <img src="./logo-bible.png" alt="Lắng Nghe Kinh Thánh" width={200} height={200} />
             </span>
             <span>
               <strong className="block text-sm">
-                Audio Bible
+                Lắng Nghe Kinh Thánh
               </strong>
               <small className="text-xs text-slate-400">
-                Admin Console
+                Trang quản trị
               </small>
             </span>
           </Link>
@@ -84,7 +85,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           aria-label="Điều hướng quản trị"
         >
           <p className="mb-3 px-3 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">
-            Workspace
+            Danh mục
           </p>
           {navigation
             .filter(

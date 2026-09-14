@@ -6,8 +6,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Audio Bible Portal",
-  description: "Web ứng dụng nghe và quản lý Audio Bible",
+  title: "Trang quản trị - Lắng Nghe Kinh Thánh",
+  description: "Trang quản trị - Lắng Nghe Kinh Thánh",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

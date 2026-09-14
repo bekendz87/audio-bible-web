@@ -20,14 +20,20 @@ export default function LoginPage() {
             const result = (await authService.login({
                 email: form.get("email"),
                 password: form.get("password"),
+                role: "ADMIN"
             })) as {
                 accessToken?: string;
                 refreshToken?: string;
                 data?: { accessToken?: string; refreshToken?: string };
             };
-            const body = result.data ?? result;
+            const body: any = result.data ?? result;
+
             if (!body.accessToken) {
                 throw new Error("Thông tin đăng nhập không hợp lệ");
+            }
+
+            if (body.role == "USER") {
+                throw new Error("Tài khoản này không được quyền truy cập vào hệ thống");
             }
 
             localStorage.setItem("accessToken", body.accessToken);
@@ -40,11 +46,9 @@ export default function LoginPage() {
                 String(Date.now() + 30 * 60 * 1000),
             );
             router.push("/admin");
-        } catch (loginError) {
+        } catch (loginError: any) {
             setError(
-                loginError instanceof Error
-                    ? loginError.message
-                    : "Đăng nhập thất bại. Vui lòng thử lại.",
+                loginError ? loginError.message : "Đăng nhập thất bại. Vui lòng thử lại.",
             );
         } finally {
             setLoading(false);
@@ -59,14 +63,14 @@ export default function LoginPage() {
             <div className="glass-panel grid w-full max-w-5xl overflow-hidden rounded-3xl lg:grid-cols-2">
                 <div className="hidden bg-indigo-600 p-12 text-white lg:block">
                     <div className="flex items-center gap-3">
-                        <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/15">
-                            <BookOpen className="h-5 w-5" />
+                        <span className="grid place-items-center rounded-xl ">
+                            <img src="./logo-bible.png" alt="Lắng Nghe Kinh Thánh" width={200} height={200} />
                         </span>
-                        <strong>Audio Bible</strong>
+                        <strong>Lắng Nghe Kinh Thánh</strong>
                     </div>
                     <div className="mt-28">
                         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-indigo-200">
-                            Admin Console
+                            Trang quản trị
                         </p>
                         <h1 className="text-4xl font-bold leading-tight">
                             Quản trị nội dung
@@ -84,36 +88,36 @@ export default function LoginPage() {
                         <div className="mb-10 lg:hidden">
                             <div className="flex items-center gap-3">
                                 <span className="grid h-10 w-10 place-items-center rounded-xl bg-indigo-600 text-white">
-                                    <BookOpen className="h-5 w-5" />
+                                    <img src="./logo-bible.png" alt="Lắng Nghe Kinh Thánh" width={200} height={200} />
                                 </span>
-                                <strong>Audio Bible</strong>
+                                <strong>Lắng Nghe Kinh Thánh</strong>
                             </div>
                         </div>
                         <p className="text-sm font-semibold text-indigo-600">
                             Chào mừng trở lại
                         </p>
-                        <h2 className="mt-2 text-3xl font-bold">Đăng nhập</h2>
+                        <h2 className="mt-2 text-3xl text-slate-500 font-bold">Đăng nhập</h2>
                         <p className="mt-2 text-sm text-slate-500">
                             Đăng nhập để tiếp tục vào trang quản trị.
                         </p>
                         <form onSubmit={submit} className="mt-8 space-y-5">
-                            <label className="block text-sm font-semibold">
+                            <label className="block text-sm font-semibold text-slate-500">
                                 Email
                                 <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white/30 px-4 py-3 dark:border-slate-700">
-                                    <Mail className="h-4 w-4 text-slate-400" />
+                                    <Mail className="h-4 w-4 text-slate-500" />
                                     <input
                                         name="email"
                                         required
                                         type="email"
                                         placeholder="admin@audiobible.vn"
-                                        className="w-full bg-transparent text-sm outline-none"
+                                        className="w-full bg-transparent text-sm outline-none text-slate-500"
                                     />
                                 </div>
                             </label>
-                            <label className="block text-sm font-semibold">
+                            <label className="block text-sm font-semibold text-slate-500">
                                 Mật khẩu
                                 <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white/30 px-4 py-3 dark:border-slate-700">
-                                    <LockKeyhole className="h-4 w-4 text-slate-400" />
+                                    <LockKeyhole className="h-4 w-4 text-slate-500" />
                                     <input
                                         name="password"
                                         required

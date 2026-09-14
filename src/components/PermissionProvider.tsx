@@ -61,14 +61,12 @@ export function PermissionProvider({
                 );
             }
         } catch {
-            // Khi backend chưa sẵn sàng, UI vẫn hiển thị để phát triển local.
+      
         } finally {
             setLoading(false);
         }
     };
 
-    // Permission state is intentionally synchronized once with the server on mount.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => {
         void load();
     }, []);

@@ -20,14 +20,12 @@ export function findApiCodeByPath(
                     .toLowerCase()
                     .replace(/\/$/, "")
                     .replace(/:[^/]+/g, "[^/]+");
-                if (
-                    api.method === method.toUpperCase() &&
-                    new RegExp(`^${pattern}$`).test(cleanPath)
-                )
+
+                if (api.method === method.toUpperCase() && new RegExp(`^${pattern}$`).test(cleanPath)) {
                     return api.code;
+                }
+
             }
     const sidebarModule = SIDEBAR_MODULE_MAP[cleanPath];
-    return sidebarModule && method.toUpperCase() === "GET"
-        ? `SIDEBAR_MENU_MODULE_${sidebarModule}`
-        : null;
+    return sidebarModule && method.toUpperCase() === "GET" ? `SIDEBAR_MENU_MODULE_${sidebarModule}` : null;
 }

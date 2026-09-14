@@ -1,2 +1,13 @@
 import { api } from "@/lib/api-client";
-export const userService = { list: (params?: Record<string, unknown>) => api.get("/users", { params }), admins: () => api.get("/users/admin"), roles: () => api.get("/users/role/list"), detail: (id: string) => api.get(`/users/${id}`), info: () => api.get("/users/detail-info"), create: (data: unknown) => api.post("/users/create", data), update: (id: string, data: unknown) => api.put(`/users/${id}`, data), permissions: (id: string, data: unknown) => api.put(`/users/${id}/permissions`, data), remove: (id: string) => api.delete(`/users/${id}`) };
+
+export const userService = {
+    list: (params?: Record<string, unknown>) => api.get("/users", { params }),
+    admins: () => api.get("/users/admin"),
+    roles: () => api.get("/users/role/list"),
+    detail: (id: string) => api.get(`/users/${id}`),
+    info: () => api.get("/users/detail-info"),
+    create: (data: unknown) => api.post("/users/create", data),
+    update: (id: string, data: unknown) => api.put(`/users/${id}`, data),
+    permissions: (id: string, data: unknown) => api.put(`/users/${id}/permissions`, data),
+    remove: (id: string) => api.delete(`/users/${id}`),
+};

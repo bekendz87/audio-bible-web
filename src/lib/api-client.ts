@@ -13,31 +13,38 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     if (typeof window !== "undefined") {
         const token = localStorage.getItem("accessToken");
-        if (token) config.headers.Authorization = `Bearer ${token}`;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
     }
-    if (config.data instanceof FormData) delete config.headers["Content-Type"];
+
+    if (config.data instanceof FormData) {
+        delete config.headers["Content-Type"];
+    }
     return config;
 });
 
 let refreshPromise: Promise<string | null> | null = null;
 function clearAuth() {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+        return;
+    }
+
     ["accessToken", "refreshToken", "tokenExpiry"].forEach((key) =>
         localStorage.removeItem(key),
     );
 }
 
-apiClient.interceptors.response.use(
-    (response) => response.data,
+apiClient.interceptors.response.use((response) => {
+    console.log(response);
+    return response.data
+},
     async (error: AxiosError) => {
         const original = error.config as
             | (InternalAxiosRequestConfig & { _retry?: boolean })
             | undefined;
         if (
-            error.response?.status === 401 &&
-            original &&
-            !original._retry &&
-            typeof window !== "undefined"
+            error.response?.status === 401 && original && !original._retry && typeof window !== "undefined"
         ) {
             original._retry = true;
             const refreshToken = localStorage.getItem("refreshToken");
@@ -46,8 +53,10 @@ apiClient.interceptors.response.use(
                     .post("/api/refresh", { refreshToken }, { timeout: 5000 })
                     .then(({ data }) => {
                         const body = data?.data ?? data;
-                        if (!body?.accessToken)
+                        if (!body?.accessToken) {
                             throw new Error("Refresh token không hợp lệ");
+                        }
+
                         localStorage.setItem("accessToken", body.accessToken);
                         if (body.refreshToken)
                             localStorage.setItem(
@@ -69,8 +78,10 @@ apiClient.interceptors.response.use(
                     });
                 try {
                     const token = await refreshPromise;
-                    if (token)
+                    if (token) {
                         original.headers.Authorization = `Bearer ${token}`;
+                    }
+
                     return apiClient(original);
                 } catch {
                     return Promise.reject(error);

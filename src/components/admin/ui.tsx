@@ -86,8 +86,10 @@ export function Select({
   const selected = options.find((option) => option.value === value);
   useEffect(() => {
     const close = (event: MouseEvent) => {
-      if (!containerRef.current?.contains(event.target as Node))
+      if (!containerRef.current?.contains(event.target as Node)) {
         setOpen(false);
+      }
+
     };
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);

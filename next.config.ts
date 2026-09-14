@@ -6,7 +6,9 @@ runAutoScan();
 
 const nextConfig: NextConfig = {
     async rewrites() {
-        if (!backendUrl) return [];
+        if (!backendUrl) {
+            return [];
+        }
         const be = backendUrl.replace(/\/$/, "");
         const routes: [string, string][] = [
             ["/api/users/detail-info", "/app/info"],
@@ -16,9 +18,9 @@ const nextConfig: NextConfig = {
             ["/api/narrator", "/narrators/all"],
             ["/api/author", "/authors/all"],
             ["/api/analytics", "/analytics/overview"],
-            ["/api/login", "/login"],
-            ["/api/logout", "/logout"],
-            ["/api/refresh", "/refresh"],
+            ["/api/login", "/auth/login"],
+            ["/api/logout", "/auth/logout"],
+            ["/api/refresh", "/auth/refresh"],
             ["/api/authors", "/admin/authors"],
             ["/api/category", "/admin/categories"],
             [
@@ -125,7 +127,9 @@ const nextConfig: NextConfig = {
     experimental: { workerThreads: false, cpus: 1, webpackBuildWorker: false },
     productionBrowserSourceMaps: false,
     webpack: (config, { dev }) => {
-        if (dev) config.devtool = false;
+        if (dev) {
+            config.devtool = false;
+        }
         return config;
     },
     turbopack: {},
