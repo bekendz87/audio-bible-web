@@ -2,12 +2,15 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, BookOpen, LockKeyhole, Mail } from "lucide-react";
+import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
+import Cookies from "js-cookie";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { authService } from "@/services/auth";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
     const router = useRouter();
+    const { login } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -15,40 +18,58 @@ export default function LoginPage() {
         event.preventDefault();
         setLoading(true);
         setError("");
+
         const form = new FormData(event.currentTarget);
+        const email = form.get("email") as string;
+        const password = form.get("password") as string;
+
         try {
             const result = (await authService.login({
-                email: form.get("email"),
-                password: form.get("password"),
+                email,
+                password,
                 role: "ADMIN"
-            })) as {
-                accessToken?: string;
-                refreshToken?: string;
-                data?: { accessToken?: string; refreshToken?: string };
-            };
-            const body: any = result.data ?? result;
+            })) as any;
 
-            if (!body.accessToken) {
+            const body = result.data ?? result;
+
+            if (!body?.accessToken) {
                 throw new Error("Thông tin đăng nhập không hợp lệ");
             }
 
-            if (body.role == "USER") {
-                throw new Error("Tài khoản này không được quyền truy cập vào hệ thống");
+            if (body.role === "USER") {
+                throw new Error("Tài khoản này không có quyền truy cập vào hệ thống quản trị");
             }
 
-            localStorage.setItem("accessToken", body.accessToken);
+
+            Cookies.set("accessToken", body.accessToken, {
+                expires: 1,
+                secure: true,
+                sameSite: "strict",
+            });
+
             if (body.refreshToken) {
-                localStorage.setItem("refreshToken", body.refreshToken);
+                Cookies.set("refreshToken", body.refreshToken, {
+                    expires: 30,
+                    secure: true,
+                    sameSite: "strict",
+                });
             }
 
-            localStorage.setItem(
-                "tokenExpiry",
-                String(Date.now() + 30 * 60 * 1000),
-            );
-            router.push("/admin");
+            const userData = {
+                id: body.id,
+                email: body.email || email,
+                role: body.role,
+            };
+
+            localStorage.setItem("userInfo", JSON.stringify(userData));
+
+            login(body.accessToken, userData);
+
         } catch (loginError: any) {
             setError(
-                loginError ? loginError.message : "Đăng nhập thất bại. Vui lòng thử lại.",
+                loginError?.response?.data?.message ||
+                loginError?.message ||
+                "Đăng nhập thất bại. Vui lòng thử lại."
             );
         } finally {
             setLoading(false);
@@ -63,8 +84,8 @@ export default function LoginPage() {
             <div className="glass-panel grid w-full max-w-5xl overflow-hidden rounded-3xl lg:grid-cols-2">
                 <div className="hidden bg-indigo-600 p-12 text-white lg:block">
                     <div className="flex items-center gap-3">
-                        <span className="grid place-items-center rounded-xl ">
-                            <img src="./logo-bible.png" alt="Lắng Nghe Kinh Thánh" width={200} height={200} />
+                        <span className="grid place-items-center rounded-xl">
+                            <img src="/images/logo-bible.png" alt="Lắng Nghe Kinh Thánh" width={200} height={200} />
                         </span>
                         <strong>Lắng Nghe Kinh Thánh</strong>
                     </div>
@@ -96,34 +117,34 @@ export default function LoginPage() {
                         <p className="text-sm font-semibold text-indigo-600">
                             Chào mừng trở lại
                         </p>
-                        <h2 className="mt-2 text-3xl text-slate-500 font-bold">Đăng nhập</h2>
-                        <p className="mt-2 text-sm text-slate-500">
+                        <h2 className="mt-2 text-3xl font-bold text-slate-800 dark:text-slate-100">Đăng nhập</h2>
+                        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                             Đăng nhập để tiếp tục vào trang quản trị.
                         </p>
                         <form onSubmit={submit} className="mt-8 space-y-5">
-                            <label className="block text-sm font-semibold text-slate-500">
+                            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                                 Email
-                                <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white/30 px-4 py-3 dark:border-slate-700">
-                                    <Mail className="h-4 w-4 text-slate-500" />
+                                <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-white/50 px-4 py-3 dark:border-slate-700 dark:bg-slate-900/50">
+                                    <Mail className="h-4 w-4 text-slate-400" />
                                     <input
                                         name="email"
                                         required
                                         type="email"
                                         placeholder="admin@audiobible.vn"
-                                        className="w-full bg-transparent text-sm outline-none text-slate-500"
+                                        className="w-full bg-transparent text-sm outline-none text-slate-800 dark:text-slate-100"
                                     />
                                 </div>
                             </label>
-                            <label className="block text-sm font-semibold text-slate-500">
+                            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                                 Mật khẩu
-                                <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white/30 px-4 py-3 dark:border-slate-700">
-                                    <LockKeyhole className="h-4 w-4 text-slate-500" />
+                                <div className="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-white/50 px-4 py-3 dark:border-slate-700 dark:bg-slate-900/50">
+                                    <LockKeyhole className="h-4 w-4 text-slate-400" />
                                     <input
                                         name="password"
                                         required
                                         type="password"
                                         placeholder="••••••••"
-                                        className="w-full bg-transparent text-sm outline-none"
+                                        className="w-full bg-transparent text-sm outline-none text-slate-800 dark:text-slate-100"
                                     />
                                 </div>
                             </label>
@@ -135,14 +156,15 @@ export default function LoginPage() {
                             <div className="flex justify-end">
                                 <a
                                     href="#forgot"
-                                    className="text-xs font-semibold text-indigo-600"
+                                    className="text-xs font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
                                 >
                                     Quên mật khẩu?
                                 </a>
                             </div>
                             <button
+                                type="submit"
                                 disabled={loading}
-                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-indigo-700 disabled:opacity-60"
+                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-indigo-700 active:scale-[0.99] disabled:opacity-60"
                             >
                                 {loading ? "Đang xác thực..." : "Đăng nhập"}
                                 <ArrowRight className="h-4 w-4" />

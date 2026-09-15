@@ -119,7 +119,7 @@ export function ConfirmModal({
                         Hủy
                     </Button>
                     <Button variant="danger" onClick={onConfirm}>
-                        Xóa dữ liệu
+                        {title}
                     </Button>
                 </>
             }
@@ -127,8 +127,8 @@ export function ConfirmModal({
             <div className="flex gap-3 rounded-2xl border border-rose-200 bg-rose-50/75 p-4 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-300">
                 <AlertTriangle className="h-5 w-5 shrink-0" />
                 <p>
-                    Bạn có chắc muốn xóa <strong>{itemName}</strong>? Thao tác
-                    này chỉ mô phỏng trên giao diện.
+                    Bạn có chắc thực hiện thao tác <strong>{itemName}</strong>? Thao tác
+                    này sẽ không thể hoàn tác.
                 </p>
             </div>
         </Modal>

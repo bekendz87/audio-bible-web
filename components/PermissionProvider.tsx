@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api-client";
 import { permissionService } from "@/services/permissions";
 import { findApiCodeByPath } from "@/lib/permission-resolver";
+import Cookies from "js-cookie";
 
 type Manifest = {
     module: string;
@@ -11,6 +12,7 @@ type Manifest = {
         apis: { method: string; clientPath: string; code: string }[];
     }[];
 }[];
+
 type PermissionContextValue = {
     loading: boolean;
     userPermissions: string[];
@@ -18,6 +20,7 @@ type PermissionContextValue = {
     canAccess: (method: string, path: string) => boolean;
     refetchPermissions: () => Promise<void>;
 };
+
 const PermissionContext = createContext<PermissionContextValue>({
     loading: true,
     userPermissions: [],
@@ -26,11 +29,7 @@ const PermissionContext = createContext<PermissionContextValue>({
     refetchPermissions: async () => undefined,
 });
 
-export function PermissionProvider({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+export function PermissionProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
     const [userPermissions, setUserPermissions] = useState<string[]>([]);
     const [scannedModules, setScannedModules] = useState<Manifest>([]);
@@ -40,36 +39,32 @@ export function PermissionProvider({
         try {
             const scan = await api.get<Manifest>("/permissions/scan");
             setScannedModules(
-                Array.isArray(scan)
-                    ? scan
-                    : ((scan as { data?: Manifest })?.data ?? []),
+                Array.isArray(scan) ? scan : ((scan as { data?: Manifest })?.data ?? [])
             );
-            if (
-                typeof window !== "undefined" &&
-                localStorage.getItem("accessToken")
-            ) {
+
+            if (typeof window !== "undefined" && Cookies.get("accessToken")) {
                 const result = await permissionService.byUser();
                 const permissions =
                     (result as { data?: { code?: string }[] })?.data ??
-                    (Array.isArray(result)
-                        ? (result as { code?: string }[])
-                        : []);
+                    (Array.isArray(result) ? (result as { code?: string }[]) : []);
+
                 setUserPermissions(
                     permissions
                         .map((permission) => permission.code)
-                        .filter((code): code is string => Boolean(code)),
+                        .filter((code): code is string => Boolean(code))
                 );
             }
-        } catch {
-      
+        } catch (err) {
+            console.error("Lỗi tải danh sách quyền:", err);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        void load();
+        load();
     }, []);
+
     const value = useMemo(
         () => ({
             loading,
@@ -77,17 +72,20 @@ export function PermissionProvider({
             scannedModules,
             refetchPermissions: load,
             canAccess: (method: string, clientPath: string) => {
-                if (!userPermissions.length) return true;
-                const code = findApiCodeByPath(
-                    scannedModules,
-                    method,
-                    clientPath,
-                );
-                return Boolean(code && userPermissions.includes(code));
+
+                const normalizedPath = clientPath.startsWith("/admin") ? clientPath.replace(/^\/admin/, "") || "/" : clientPath;
+
+                const code = findApiCodeByPath(scannedModules, method, normalizedPath);
+                if (!code) {
+                    return true;
+                }
+
+                return userPermissions.includes(code);
             },
         }),
-        [loading, userPermissions, scannedModules],
+        [loading, userPermissions, scannedModules]
     );
+
     return (
         <PermissionContext.Provider value={value}>
             {children}

@@ -199,7 +199,7 @@ export function PageHeader({
     <div className="mb-7 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
       <div>
         <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-300">
-          Admin workspace
+          Trang quản trị
         </p>
         <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 dark:text-white sm:text-3xl">
           {title}

@@ -9,9 +9,10 @@ export default function AdminLayout({
 }) {
     return (
         <PermissionProvider>
-            <ActionFeedback>
-                <AdminShell>{children}</AdminShell>
-            </ActionFeedback>
+            <AdminShell>{children}</AdminShell>
+            {/* <ActionFeedback>
+                
+            </ActionFeedback> */}
         </PermissionProvider>
     );
 }

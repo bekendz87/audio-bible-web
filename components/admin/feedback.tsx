@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, CheckCircle2, Info, Loader2, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, FileWarning, Info, Loader2, OctagonAlert, TriangleAlert, X } from "lucide-react";
 import { useEffect } from "react";
 
 export function LoadingState({
@@ -44,7 +44,7 @@ const alertTone = {
             "border-emerald-200/70 bg-emerald-50/80 text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-500/10 dark:text-emerald-300",
     },
     error: {
-        icon: AlertTriangle,
+        icon: OctagonAlert,
         className:
             "border-rose-200/70 bg-rose-50/80 text-rose-700 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-300",
     },
@@ -52,6 +52,12 @@ const alertTone = {
         icon: Info,
         className:
             "border-sky-200/70 bg-sky-50/80 text-sky-700 dark:border-sky-400/20 dark:bg-sky-500/10 dark:text-sky-300",
+    },
+
+    warning: {
+        icon: TriangleAlert,
+        className:
+            "border-amber-200/70 bg-amber-50/80 text-amber-700 dark:border-amber-400/20 dark:bg-amber-500/10 dark:text-amber-300",
     },
 };
 
@@ -105,7 +111,7 @@ export function FlashAlert({
     onClose,
 }: {
     message: string;
-    tone?: "success" | "error" | "info";
+    tone?: "success" | "error" | "info" | any;
     duration?: number;
     onClose?: () => void;
 }) {
@@ -136,10 +142,16 @@ export function Modal({
     footer?: React.ReactNode;
 }) {
     useEffect(() => {
-        if (!open) return;
+        if (!open) {
+            return;
+        }
+
         const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Escape") onClose();
+            if (event.key === "Escape") {
+                onClose();
+            }
         };
+
         document.addEventListener("keydown", onKeyDown);
         document.body.style.overflow = "hidden";
         return () => {
@@ -147,7 +159,11 @@ export function Modal({
             document.body.style.overflow = "";
         };
     }, [open, onClose]);
-    if (!open) return null;
+
+    if (!open) {
+        return null;
+    }
+
     return (
         <div
             className="modal-root fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6"

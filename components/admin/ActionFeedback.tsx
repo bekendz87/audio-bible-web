@@ -7,7 +7,7 @@ const ignoredLabels = [
     "Mở menu",
     "Đóng menu",
     "Toggle Theme",
-    "Đăng xuất",
+    "Đăng xuất Mobile",
     "Trang trước",
     "Trang sau",
     "Thêm",

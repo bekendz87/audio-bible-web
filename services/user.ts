@@ -7,7 +7,7 @@ export const userService = {
     detail: (id: string) => api.get(`/users/${id}`),
     info: () => api.get("/users/detail-info"),
     create: (data: unknown) => api.post("/users/create", data),
-    update: (id: string, data: unknown) => api.put(`/users/${id}`, data),
+    update: (id: number, data: unknown) => api.put(`/users/${id}`, data),
     permissions: (id: string, data: unknown) => api.put(`/users/${id}/permissions`, data),
     remove: (id: string) => api.delete(`/users/${id}`),
 };

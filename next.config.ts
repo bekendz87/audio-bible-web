@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
         }
         const be = backendUrl.replace(/\/$/, "");
         const routes: [string, string][] = [
-            ["/api/users/detail-info", "/app/info"],
+            ["/api/users/detail-info", "/users/info"],
             ["/api/book", "/admin/books"],
             ["/api/book/create", "/admin/books"],
             ["/api/track/upload", "/tracks/upload"],
@@ -73,14 +73,14 @@ const nextConfig: NextConfig = {
                 "/api/permission/code/:code",
                 "/admin/users/role/find-code?code=:code",
             ],
-            ["/api/permission/role", "/admin/users/role"],
+            ["/api/permission/role", "/auth/role"],
             ["/api/permission/remove", "/admin/users/role/remove"],
             [
                 "/api/permission/module/:module",
                 "/admin/users/role/find-module?moduleName=:module",
             ],
             ["/api/users/create", "/admin/users"],
-            ["/api/users/:id", "/admin/users/:id"],
+            ["/api/users/:id", "/users/update/:id"],
             ["/api/logs", "/log/logs"],
             ["/api/logs/:id", "/log/logs/:id"],
             ["/api/logs/all", "/log/logs/all"],

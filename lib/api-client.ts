@@ -3,6 +3,7 @@ import axios, {
     AxiosRequestConfig,
     InternalAxiosRequestConfig,
 } from "axios";
+import Cookies from "js-cookie"
 
 const apiClient = axios.create({
     baseURL: "/api",
@@ -12,7 +13,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     if (typeof window !== "undefined") {
-        const token = localStorage.getItem("accessToken");
+        const token = Cookies.get("accessToken");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -31,7 +32,7 @@ function clearAuth() {
     }
 
     ["accessToken", "refreshToken", "tokenExpiry"].forEach((key) =>
-        localStorage.removeItem(key),
+        Cookies.remove(key),
     );
 }
 
@@ -47,7 +48,7 @@ apiClient.interceptors.response.use((response) => {
             error.response?.status === 401 && original && !original._retry && typeof window !== "undefined"
         ) {
             original._retry = true;
-            const refreshToken = localStorage.getItem("refreshToken");
+            const refreshToken = Cookies.get("refreshToken");
             if (refreshToken) {
                 refreshPromise ??= axios
                     .post("/api/refresh", { refreshToken }, { timeout: 5000 })
@@ -57,13 +58,13 @@ apiClient.interceptors.response.use((response) => {
                             throw new Error("Refresh token không hợp lệ");
                         }
 
-                        localStorage.setItem("accessToken", body.accessToken);
+                        Cookies.set("accessToken", body.accessToken);
                         if (body.refreshToken)
-                            localStorage.setItem(
+                            Cookies.set(
                                 "refreshToken",
                                 body.refreshToken,
                             );
-                        localStorage.setItem(
+                        Cookies.set(
                             "tokenExpiry",
                             String(Date.now() + 30 * 60 * 1000),
                         );
