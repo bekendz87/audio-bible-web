@@ -2,8 +2,8 @@ import { api } from "@/lib/api-client";
 
 export const chapterService = {
     list: (params?: Record<string, unknown>) => api.get("/chapters", { params }),
-    byBook: (id: string) => api.get(`/chapters/${id}`),
-    create: (data: unknown) => api.post("/chapters", data),
-    update: (id: string, data: unknown) => api.put(`/chapters/updated/${id}`, data),
-    remove: (id: string) => api.delete(`/chapters/delete/${id}`),
+    byBook: (id: number) => api.get(`/chapters/${id}`),
+    create: (data: unknown) => api.post("/chapters/created", data),
+    update: (id: number, data: unknown) => api.put(`/chapters/updated/${id}`, data),
+    remove: (id: number) => api.delete(`/chapters/delete/${id}`),
 };

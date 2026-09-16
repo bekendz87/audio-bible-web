@@ -78,7 +78,7 @@ export function scanAndGroupServices(
 }
 
 export function runAutoScan() {
-    const services = path.join(process.cwd(), "src", "services");
+    const services = path.join(process.cwd(),  "services");
     const outputDirectory = path.join(process.cwd(), "data");
     const outputFile = path.join(outputDirectory, "api-permissions.json");
     try {

@@ -3,7 +3,7 @@ import axios, {
     AxiosRequestConfig,
     InternalAxiosRequestConfig,
 } from "axios";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 
 const apiClient = axios.create({
     baseURL: "/api",
@@ -26,29 +26,40 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 });
 
 let refreshPromise: Promise<string | null> | null = null;
-function clearAuth() {
+
+function clearAuthAndRedirect() {
     if (typeof window === "undefined") {
         return;
     }
 
     ["accessToken", "refreshToken", "tokenExpiry"].forEach((key) =>
-        Cookies.remove(key),
+        Cookies.remove(key)
     );
+    localStorage.removeItem("userInfo");
+
+    if (!window.location.pathname.startsWith("/login")) {
+        window.location.href = "/login";
+    }
 }
 
-apiClient.interceptors.response.use((response) => {
-    console.log(response);
-    return response.data
-},
+apiClient.interceptors.response.use(
+    (response) => {
+        return response.data;
+    },
     async (error: AxiosError) => {
         const original = error.config as
             | (InternalAxiosRequestConfig & { _retry?: boolean })
             | undefined;
+
         if (
-            error.response?.status === 401 && original && !original._retry && typeof window !== "undefined"
+            error.response?.status === 401 &&
+            original &&
+            !original._retry &&
+            typeof window !== "undefined"
         ) {
             original._retry = true;
             const refreshToken = Cookies.get("refreshToken");
+
             if (refreshToken) {
                 refreshPromise ??= axios
                     .post("/api/refresh", { refreshToken }, { timeout: 5000 })
@@ -58,60 +69,70 @@ apiClient.interceptors.response.use((response) => {
                             throw new Error("Refresh token không hợp lệ");
                         }
 
-                        Cookies.set("accessToken", body.accessToken);
-                        if (body.refreshToken)
-                            Cookies.set(
-                                "refreshToken",
-                                body.refreshToken,
-                            );
+                        Cookies.set("accessToken", body.accessToken, {
+                            expires: 1,
+                            secure: process.env.NODE_ENV === "production",
+                            sameSite: "strict",
+                        });
+
+                        if (body.refreshToken) {
+                            Cookies.set("refreshToken", body.refreshToken, {
+                                expires: 7,
+                                secure: process.env.NODE_ENV === "production",
+                                sameSite: "strict",
+                            });
+                        }
+
                         Cookies.set(
                             "tokenExpiry",
-                            String(Date.now() + 30 * 60 * 1000),
+                            String(Date.now() + 30 * 60 * 1000)
                         );
                         return body.accessToken;
                     })
                     .catch((refreshError) => {
-                        clearAuth();
+                        clearAuthAndRedirect();
+                        console.error("Lỗi refresh token:", refreshError);
                         throw refreshError;
                     })
                     .finally(() => {
                         refreshPromise = null;
                     });
+
                 try {
                     const token = await refreshPromise;
                     if (token) {
                         original.headers.Authorization = `Bearer ${token}`;
+                        return apiClient(original);
                     }
-
-                    return apiClient(original);
                 } catch {
                     return Promise.reject(error);
                 }
+            } else {
+                clearAuthAndRedirect();
             }
-            clearAuth();
         }
         return Promise.reject(error.response?.data ?? error);
-    },
+    }
 );
 
 export const api = {
-    get: <T = unknown,>(url: string, config?: AxiosRequestConfig) =>
+    get: <T = unknown>(url: string, config?: AxiosRequestConfig) =>
         apiClient.get<T>(url, config) as Promise<T>,
-    post: <T = unknown,>(
+    post: <T = unknown>(
         url: string,
         data?: unknown,
-        config?: AxiosRequestConfig,
+        config?: AxiosRequestConfig
     ) => apiClient.post<T>(url, data, config) as Promise<T>,
-    put: <T = unknown,>(
+    put: <T = unknown>(
         url: string,
         data?: unknown,
-        config?: AxiosRequestConfig,
+        config?: AxiosRequestConfig
     ) => apiClient.put<T>(url, data, config) as Promise<T>,
-    patch: <T = unknown,>(
+    patch: <T = unknown>(
         url: string,
         data?: unknown,
-        config?: AxiosRequestConfig,
+        config?: AxiosRequestConfig
     ) => apiClient.patch<T>(url, data, config) as Promise<T>,
-    delete: <T = unknown,>(url: string, config?: AxiosRequestConfig) =>
+    delete: <T = unknown>(url: string, config?: AxiosRequestConfig) =>
         apiClient.delete<T>(url, config) as Promise<T>,
 };

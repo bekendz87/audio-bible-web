@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
         const be = backendUrl.replace(/\/$/, "");
         const routes: [string, string][] = [
             ["/api/users/detail-info", "/users/info"],
-            ["/api/book", "/admin/books"],
+            ["/api/book", "/books/page"],
             ["/api/book/create", "/admin/books"],
             ["/api/track/upload", "/tracks/upload"],
             ["/api/narrator", "/narrators/all"],
@@ -31,7 +31,8 @@ const nextConfig: NextConfig = {
             ["/api/book/:id", "/admin/books/:id"],
             ["/api/category/create", "/admin/categories"],
             ["/api/category/:id", "/admin/categories/:id"],
-            ["/api/chapters", "/admin/chapters"],
+            ["/api/chapters", "/books/chapters/page"],
+            ["/api/chapters/created", "/chapters"],
             ["/api/chapters/updated/:id", "/admin/chapters/:id"],
             ["/api/chapters/delete/:id", "/admin/chapters/:id"],
             ["/api/storage/upload-document", "/admin/storage/upload-document"],
@@ -117,7 +118,8 @@ const nextConfig: NextConfig = {
             ["/api/reviews/:id/reject", "/admin/reviews/:id"],
             ["/api/reviews/config-auto-review", "/app/config/update"],
             ["/api/reviews/get-config", "/app/config/status"],
-            ["/api/bad-words", "/admin/books/bad-words/list"],
+            ["/api/upload/images", "/admin/upload/image"],
+            ["/api/upload/audio", "/admin/upload/audio"],
         ];
         return routes.map(([source, destination]) => ({
             source,

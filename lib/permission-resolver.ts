@@ -13,19 +13,43 @@ export function findApiCodeByPath(
     clientPath: string,
 ) {
     const cleanPath = clientPath.toLowerCase().replace(/\/$/, "");
-    for (const manifestModule of manifest ?? [])
-        for (const feature of manifestModule.features ?? [])
-            for (const api of feature.apis ?? []) {
-                const pattern = api.clientPath
-                    .toLowerCase()
-                    .replace(/\/$/, "")
-                    .replace(/:[^/]+/g, "[^/]+");
+    const upperMethod = method.toUpperCase();
 
-                if (api.method === method.toUpperCase() && new RegExp(`^${pattern}$`).test(cleanPath)) {
+    const normalizedPath = cleanPath.endsWith("s") ? cleanPath.slice(0, -1) : cleanPath;
+
+    for (const manifestModule of manifest ?? []) {
+        for (const feature of manifestModule.features ?? []) {
+            for (const api of feature.apis ?? []) {
+                const apiPath = (api.clientPath || "").toLowerCase().replace(/\/$/, "");
+                const apiPathNormalized = apiPath.endsWith("s") ? apiPath.slice(0, -1) : apiPath;
+
+                const pattern = apiPathNormalized.replace(/:[^/]+/g, "[^/]+");
+
+                if (
+                    api.method?.toUpperCase() === upperMethod &&
+                    (new RegExp(`^${pattern}$`).test(cleanPath) || new RegExp(`^${pattern}$`).test(normalizedPath))
+                ) {
                     return api.code;
                 }
-
             }
-    const sidebarModule = SIDEBAR_MODULE_MAP[cleanPath];
-    return sidebarModule && method.toUpperCase() === "GET" ? `SIDEBAR_MENU_MODULE_${sidebarModule}` : null;
+        }
+    }
+
+    const targetModule = SIDEBAR_MODULE_MAP[cleanPath] || SIDEBAR_MODULE_MAP[normalizedPath];
+    if (targetModule && upperMethod === "GET") {
+        for (const manifestModule of manifest ?? []) {
+            if (manifestModule.module === targetModule) {
+                for (const feature of manifestModule.features ?? []) {
+                    for (const api of feature.apis ?? []) {
+                        if (api.method?.toUpperCase() === "GET") {
+                            return api.code;
+                        }
+                    }
+                }
+            }
+        }
+        return `SIDEBAR_MENU_MODULE_${targetModule}`;
+    }
+
+    return null;
 }

@@ -120,7 +120,7 @@ export function FlashAlert({
         return () => window.clearTimeout(timeout);
     }, [duration, onClose]);
     return (
-        <div className="fixed right-5 top-5 z-50 w-[min(380px,calc(100vw-2.5rem))] animate-in">
+        <div className="fixed right-5 top-5 z-[9999] w-[min(380px,calc(100vw-2.5rem))] animate-in">
             <Alert message={message} tone={tone} onClose={onClose} />
         </div>
     );

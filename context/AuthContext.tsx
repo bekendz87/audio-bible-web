@@ -14,7 +14,7 @@ export interface User {
 interface AuthContextType {
     user: User | null;
     token: string | null;
-    login: (token: string, userData: User) => void;
+    login: (token: string, userData: User, refreshToken?: string) => void;
     logout: () => void;
     isAuthenticated: boolean;
     loading: boolean;
@@ -33,8 +33,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
     useEffect(() => {
-        setLoading(true);
-
         const savedToken = Cookies.get("accessToken");
         const savedUser = localStorage.getItem("userInfo");
 
@@ -49,12 +47,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setUser(JSON.parse(savedUser));
             } catch (e) {
                 console.error("Lỗi parse thông tin user từ localStorage:", e);
+                setUser(null);
             }
         } else {
             setUser(null);
         }
 
-        const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
+        const isPublicRoute = PUBLIC_ROUTES.some((route) =>
+            pathname.startsWith(route)
+        );
 
         if (savedToken && isPublicRoute) {
             router.replace("/admin");
@@ -70,12 +71,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return () => clearTimeout(timer);
     }, [pathname, router]);
 
-    const login = (newToken: string, userData: User) => {
+    const login = (newToken: string, userData: User, refreshToken?: string) => {
         Cookies.set("accessToken", newToken, {
             expires: 1,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
         });
+
+        if (refreshToken) {
+            Cookies.set("refreshToken", refreshToken, {
+                expires: 7,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+            });
+        }
 
         localStorage.setItem("userInfo", JSON.stringify(userData));
 
@@ -88,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const logout = () => {
         Cookies.remove("accessToken");
         Cookies.remove("refreshToken");
+        Cookies.remove("tokenExpiry");
         localStorage.removeItem("userInfo");
 
         setToken(null);
@@ -111,7 +121,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 <div className="flex min-h-screen items-center justify-center bg-slate-50 transition-opacity duration-300 dark:bg-slate-900">
                     <div className="flex flex-col items-center gap-3">
                         <div className="h-9 w-9 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-                        <p className="text-xs font-medium text-slate-500 animate-pulse">Đang xác thực hệ thống...</p>
+                        <p className="animate-pulse text-xs font-medium text-slate-500">
+                            Đang xác thực hệ thống...
+                        </p>
                     </div>
                 </div>
             ) : (
