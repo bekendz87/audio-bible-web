@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookPlus, Pencil, Trash2, Loader2, Image as ImageIcon } from "lucide-react";
+import { BookPlus, Pencil, Trash2, Loader2, Image as ImageIcon, Bookmark, Hash } from "lucide-react";
 import {
     Button,
     PageHeader,
     Pagination,
     SearchBox,
     TableCard,
-    tableCellClass,
-    tableHeadClass,
 } from "@/components/admin/ui";
 import { ConfirmModal, EntityModal } from "@/components/admin/crud";
 import { FlashAlert } from "@/components/admin/feedback";
@@ -123,7 +121,7 @@ export default function BooksPage() {
             };
 
             if (editing) {
-                // await bookService.update(Number(editing.id), payload);
+                await bookService.update(Number(editing.id), payload);
                 setNotice("Đã cập nhật thông tin sách!");
             } else {
                 await bookService.create(payload);
@@ -141,10 +139,12 @@ export default function BooksPage() {
     }
 
     async function handleRemove() {
-        if (!deleting) return;
+        if (!deleting) {
+            return;
+        }
 
         try {
-            // await bookService.remove(deleting.id);
+            await bookService.remove(deleting.id);
             setNotice(`Đã xóa sách "${deleting.title}" thành công!`);
             setTone("success");
             setDeleting(null);
@@ -177,117 +177,112 @@ export default function BooksPage() {
 
             <TableCard>
                 <div className="flex flex-col justify-between gap-3 border-b border-slate-100 p-5 dark:border-slate-800 sm:flex-row">
-                    <h2 className="font-bold">
+                    <h2 className="font-bold text-slate-800 dark:text-slate-100">
                         Danh sách sách{" "}
                         <span className="ml-1 text-sm font-normal text-slate-500">
-                            {filtered.length}
+                            ({filtered.length})
                         </span>
                     </h2>
                     <SearchBox
-                        placeholder="Tìm tên sách"
+                        placeholder="Tìm tên sách..."
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
                     />
                 </div>
 
-                <div className="table-scroll">
+                <div className="p-5">
                     {loading ? (
-                        <div className="flex min-h-[200px] items-center justify-center">
-                            <Loader2 className="h-7 w-7 animate-spin text-indigo-600" />
+                        <div className="flex min-h-[300px] items-center justify-center">
+                            <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                        </div>
+                    ) : filtered.length === 0 ? (
+                        <div className="flex min-h-[200px] flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 dark:border-slate-800 p-8 text-center text-slate-500">
+                            <ImageIcon className="mb-2 h-10 w-10 text-slate-300 dark:text-slate-600" />
+                            <p className="text-sm">Không tìm thấy sách nào khớp với tìm kiếm.</p>
                         </div>
                     ) : (
-                        <table className="admin-table w-full min-w-175 text-left">
-                            <thead>
-                                <tr>
-                                    <th className={tableHeadClass}>Ảnh bìa</th>
-                                    <th className={tableHeadClass}>Tên sách</th>
-                                    <th className={tableHeadClass}>Danh mục</th>
-                                    <th className={tableHeadClass}>Số chương</th>
-                                    {(canUpdate || canDelete) && (
-                                        <th className={tableHeadClass}>Thao tác</th>
-                                    )}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filtered.length === 0 ? (
-                                    <tr>
-                                        <td
-                                            colSpan={5}
-                                            className="p-5 text-center text-sm text-slate-500"
-                                        >
-                                            Không tìm thấy sách nào.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filtered.map((item) => {
-                                        const displayName = item.title || "N/A";
-                                        const fullImageUrl = item.artworkUrl
-                                            ? item.artworkUrl.startsWith("http")
-                                                ? item.artworkUrl
-                                                : `${IMAGE_BASE_URL}${item.artworkUrl}`
-                                            : null;
+                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                            {filtered.map((item) => {
+                                const displayName = item.title || "N/A";
+                                const fullImageUrl = item.artworkUrl
+                                    ? item.artworkUrl.startsWith("http") ? item.artworkUrl : `${IMAGE_BASE_URL}${item.artworkUrl}`
+                                    : null;
 
-                                        return (
-                                            <tr
-                                                className="border-t border-slate-100 dark:border-slate-800"
-                                                key={item.id}
-                                            >
-                                                <td className={tableCellClass}>
-                                                    {fullImageUrl ? (
-                                                        <img
-                                                            src={fullImageUrl}
-                                                            alt={displayName}
-                                                            className="h-12 w-9 rounded object-cover border border-slate-200 dark:border-slate-700"
-                                                        />
-                                                    ) : (
-                                                        <div className="flex h-12 w-9 items-center justify-center rounded bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
-                                                            <ImageIcon className="h-5 w-5" />
-                                                        </div>
-                                                    )}
-                                                </td>
-                                                <td className={`${tableCellClass} font-semibold`}>
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
+                                    >
+
+                                        <div className="relative aspect-3/4 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                                            {fullImageUrl ? (
+                                                <img
+                                                    src={fullImageUrl}
+                                                    alt={displayName}
+                                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                            ) : (
+                                                <div className="flex h-full w-full flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                                                    <ImageIcon className="h-10 w-10 mb-1" />
+                                                    <span className="text-xs">Chưa có ảnh</span>
+                                                </div>
+                                            )}
+
+
+                                            {item.categoryName && (
+                                                <span className="absolute left-2 top-2 rounded-md bg-slate-900/75 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
+                                                    {item.categoryName}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-1 flex-col justify-between p-4">
+                                            <div>
+                                                <h3
+                                                    className="line-clamp-2 font-semibold text-slate-900 dark:text-slate-100"
+                                                    title={displayName}
+                                                >
                                                     {displayName}
-                                                </td>
-                                                <td className={tableCellClass}>
-                                                    {item.categoryName || "—"}
-                                                </td>
-                                                <td className={tableCellClass}>
-                                                    {item.totalChapters ?? "—"}
-                                                </td>
+                                                </h3>
+                                                <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                                                    <span>Tổng {item.totalChapters ?? 0} chương</span>
+                                                </div>
+                                            </div>
 
-                                                {(canUpdate || canDelete) && (
-                                                    <td className={`${tableCellClass} flex gap-2`}>
-                                                        {canUpdate && (
-                                                            <Button
-                                                                variant="ghost"
-                                                                className="px-2"
-                                                                onClick={() => {
-                                                                    setEditing(item);
-                                                                    setOpen(true);
-                                                                }}
-                                                                aria-label={`Sửa ${displayName}`}
-                                                            >
-                                                                <Pencil className="h-4 w-4" />
-                                                            </Button>
-                                                        )}
-                                                        {canDelete && (
-                                                            <Button
-                                                                variant="ghost"
-                                                                className="px-2 text-rose-600"
-                                                                onClick={() => setDeleting(item)}
-                                                                aria-label={`Xóa ${displayName}`}
-                                                            >
-                                                                <Trash2 className="h-4 w-4" />
-                                                            </Button>
-                                                        )}
-                                                    </td>
-                                                )}
-                                            </tr>
-                                        );
-                                    })
-                                )}
-                            </tbody>
-                        </table>
+                                            {(canUpdate || canDelete) && (
+                                                <div className="mt-4 flex items-center justify-end gap-1.5 border-t border-slate-100 pt-3 dark:border-slate-800">
+                                                    {canUpdate && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            className="h-8 px-2.5 text-xs text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                                                            onClick={() => {
+                                                                setEditing(item);
+                                                                setOpen(true);
+                                                            }}
+                                                            aria-label={`Sửa ${displayName}`}
+                                                        >
+                                                            <Pencil className="mr-1 h-3.5 w-3.5" />
+                                                            Sửa
+                                                        </Button>
+                                                    )}
+                                                    {canDelete && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            className="h-8 px-2.5 text-xs text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-950/30"
+                                                            onClick={() => setDeleting(item)}
+                                                            aria-label={`Xóa ${displayName}`}
+                                                        >
+                                                            <Trash2 className="mr-1 h-3.5 w-3.5" />
+                                                            Xóa
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     )}
                 </div>
 

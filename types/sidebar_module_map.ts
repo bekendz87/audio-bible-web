@@ -15,4 +15,5 @@ export const SIDEBAR_MODULE_MAP: Record<string, string> = {
   "/reviews": "REVIEWSERVICE",
   "/system-features": "SYSTEMFEATURES",
   "/subscription": "SUBSCRIPTION",
+  "/upload/audio": "TRACKS"
 };

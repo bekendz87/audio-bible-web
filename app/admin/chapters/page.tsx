@@ -31,10 +31,8 @@ type Chapter = {
 };
 
 export default function ChaptersPage() {
-    // 1. Lấy thêm trạng thái loading của permission
     const { canAccess, loading: permissionsLoading } = useAutoPermissions();
 
-    // Kiểm tra quyền GET xem trang cùng các thao tác CRUD
     const canRead = canAccess("GET", "/chapters");
     const canCreate = canAccess("POST", "/chapters/created");
     const canUpdate = canAccess("PUT", "/chapters/updated/:id");
@@ -46,6 +44,7 @@ export default function ChaptersPage() {
 
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [totalElements, setTotalElements] = useState(0);
 
     const [editing, setEditing] = useState<Chapter | null>(null);
     const [deleting, setDeleting] = useState<Chapter | null>(null);
@@ -71,6 +70,9 @@ export default function ChaptersPage() {
 
             const total = res?.totalPages || res?.data?.totalPages || 1;
             setTotalPages(total);
+
+            const totalCount = res?.totalElements ?? res?.data?.totalElements ?? listData.length;
+            setTotalElements(totalCount);
         } catch (error: any) {
             setNotice(error?.message || "Không thể tải danh sách chương!");
             setTone("error");
@@ -181,7 +183,7 @@ export default function ChaptersPage() {
                     <h2 className="font-bold">
                         Danh sách chương{" "}
                         <span className="ml-1 text-sm font-normal text-slate-500">
-                            {filtered.length}
+                            {query ? `${filtered.length} / ${totalElements}` : totalElements}
                         </span>
                     </h2>
                     <SearchBox
@@ -214,7 +216,7 @@ export default function ChaptersPage() {
                                 {filtered.length === 0 ? (
                                     <tr>
                                         <td
-                                            colSpan={7}
+                                            colSpan={6}
                                             className="p-5 text-center text-sm text-slate-500"
                                         >
                                             Không tìm thấy chương nào.

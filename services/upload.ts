@@ -7,4 +7,11 @@ export const uploadService = {
 
         return api.post("/upload/images", formData);
     },
+
+    uploadAudio: async (file: File, onProgress?: (e: any) => void) => {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        return await api.post("/upload/audio", formData, { onUploadProgress: onProgress, });
+    },
 };

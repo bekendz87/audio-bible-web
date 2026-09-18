@@ -5,5 +5,6 @@ export const permissionService = {
     byUser: () => api.get("/permission/role"),
     remove: (data: unknown) => api.put("/permission/remove", data),
     byModule: (module: string) => api.get(`/permission/module/${module}`),
-    roles: () => api.get("/users/role/list"),
+    roles: () => api.get("/permission"),
+    getPermissionUsers: () => api.get("/permission/users")
 };

@@ -48,3 +48,38 @@ export function getRoleConfig(role?: UserRole): RoleConfig {
         }
     );
 }
+
+export function getAudioDuration(file: File): Promise<string> {
+    return new Promise((resolve) => {
+        const audio = new Audio();
+        const objectUrl = URL.createObjectURL(file);
+        audio.src = objectUrl;
+
+        audio.onloadedmetadata = () => {
+            const seconds = Math.floor(audio.duration);
+            URL.revokeObjectURL(objectUrl);
+
+            if (isNaN(seconds) || !isFinite(seconds)) {
+                resolve("00:00");
+                return;
+            }
+
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+
+            const pad = (num: number) => String(num).padStart(2, "0");
+
+            if (hrs > 0) {
+                resolve(`${pad(hrs)}:${pad(mins)}:${pad(secs)}`);
+            } else {
+                resolve(`${pad(mins)}:${pad(secs)}`);
+            }
+        };
+
+        audio.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            resolve("00:00");
+        };
+    });
+}

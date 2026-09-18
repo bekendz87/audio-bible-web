@@ -137,6 +137,11 @@
             "code": "CHAPTERS_GET__CHAPTERS_ID"
           },
           {
+            "method": "GET",
+            "clientPath": "/chapters/book/have-audio",
+            "code": "CHAPTERS_GET__CHAPTERS_BOOK_HAVE_AUDIO"
+          },
+          {
             "method": "POST",
             "clientPath": "/chapters/created",
             "code": "CHAPTERS_POST__CHAPTERS_CREATED"
@@ -179,6 +184,16 @@
             "code": "PERMISSIONS_GET__PERMISSION_MODULE_ID"
           },
           {
+            "method": "GET",
+            "clientPath": "/permission",
+            "code": "PERMISSIONS_GET__PERMISSION"
+          },
+          {
+            "method": "GET",
+            "clientPath": "/permission/users",
+            "code": "PERMISSIONS_GET__PERMISSION_USERS"
+          },
+          {
             "method": "POST",
             "clientPath": "/permission/add-role",
             "code": "PERMISSIONS_POST__PERMISSION_ADD_ROLE"
@@ -187,34 +202,6 @@
             "method": "PUT",
             "clientPath": "/permission/remove",
             "code": "PERMISSIONS_PUT__PERMISSION_REMOVE"
-          }
-        ]
-      },
-      {
-        "featureKey": "PERMISSIONS_USERS",
-        "featureName": "PERMISSIONS",
-        "apis": [
-          {
-            "method": "GET",
-            "clientPath": "/users/role/list",
-            "code": "PERMISSIONS_GET__USERS_ROLE_LIST"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "module": "TRACKS",
-    "fileName": "tracks.ts",
-    "features": [
-      {
-        "featureKey": "TRACKS_TRACK",
-        "featureName": "TRACKS",
-        "apis": [
-          {
-            "method": "POST",
-            "clientPath": "/track/upload",
-            "code": "TRACKS_POST__TRACK_UPLOAD"
           }
         ]
       }
@@ -232,6 +219,11 @@
             "method": "POST",
             "clientPath": "/upload/images",
             "code": "UPLOAD_POST__UPLOAD_IMAGES"
+          },
+          {
+            "method": "POST",
+            "clientPath": "/upload/audio",
+            "code": "UPLOAD_POST__UPLOAD_AUDIO"
           }
         ]
       }
